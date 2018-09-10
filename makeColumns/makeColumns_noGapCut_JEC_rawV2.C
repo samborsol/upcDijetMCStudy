@@ -9,10 +9,11 @@ void makeColumns_noGapCut_JEC_rawV2(){
 	//This script is for plotting the V2 vs PT. The event mixing effect is subtracted. 
 	//Both BRP and FRP are summed up. GEN-level RAPGAP is also histogramed.
 
-        TString treeFolder = "/home/samboren/Workspace/upcAnalysis/mcClosure/data/skimmedFiles/";
-        TFile *fMCTrig = new TFile(treeFolder+"TrkCutsppreco_closureMC_trigHLT_HIUPCSingleEG5NotHF2Pixel_SingleTrack_v1_jetCollectionak4PFJetAnalyzer_minJetPt0.root");
-        TFile *fDATA = new TFile(treeFolder+"TrkCutsppreco_upcDiJetSkim180827_trigHLT_HIUPCSingleEG5NotHF2Pixel_SingleTrack_v1_jetCollectionak4PFJetAnalyzer_minJetPt0_2018y_8m_27d_23h_34m.root");
-        TFile *fGEN = new TFile(treeFolder+"TrkCutsppreco_closureMC_trig_jetCollectionak4PFJetAnalyzer_minJetPt0.root");
+	TString treeFolder = "/home/samboren/Workspace/upcAnalysis/mcClosure/data/skimmedFiles/";
+	TFile *fMCTrig = new TFile(treeFolder+"TrkCutsppreco_closureMC_trigHLT_HIUPCSingleEG5NotHF2Pixel_SingleTrack_v1_jetCollectionak4PFJetAnalyzer_minJetPt0.root");
+	TFile *fDATA = new TFile(treeFolder+"TrkCutsppreco_upcDiJetSkim180827_trigHLT_HIUPCSingleEG5NotHF2Pixel_SingleTrack_v1_jetCollectionak4PFJetAnalyzer_minJetPt0_2018y_8m_27d_23h_34m.root");
+ 	treeFolder = "/home/samboren/Workspace/upcAnalysis/mcClosure/data/hiforest/";
+	TFile *fGEN = new TFile(treeFolder+"genPreSelect.root");
 
 	TTree *dijetTree_DATA   = (TTree*)fDATA->Get("dijet");
 	TTree *trkTree_DATA     = (TTree*)fDATA->Get("fullTrkTree");
@@ -28,10 +29,10 @@ void makeColumns_noGapCut_JEC_rawV2(){
 	Float_t HFminusmax;
 	TLorentzVector jet1a;
 	TLorentzVector jet2a;
-        TLorentzVector jet1b;
-        TLorentzVector jet2b;
-        TLorentzVector jet1c;
-        TLorentzVector jet2c;
+	TLorentzVector jet1b;
+	TLorentzVector jet2b;
+	TLorentzVector jet1c;
+	TLorentzVector jet2c;
 	Float_t vz1;
 
 	TLorentzVector jetplus;
@@ -88,21 +89,21 @@ void makeColumns_noGapCut_JEC_rawV2(){
 		dijetTree_DATA->GetEntry(i);
 
 		if(djObj.nJet!=2 || abs(djObj.eta1)>1.8 || abs(djObj.eta2)>1.8 || djObj.dphi<2) continue;
-                vz1 = event.vz;
+		vz1 = event.vz;
 		if(djObj.e1>djObj.e2){
-                        jet1a.SetPtEtaPhiE(djObj.pt1,djObj.eta1,djObj.phi1,djObj.e1);
-                        jet2a.SetPtEtaPhiE(djObj.pt2,djObj.eta2,djObj.phi2,djObj.e2);
+			jet1a.SetPtEtaPhiE(djObj.pt1,djObj.eta1,djObj.phi1,djObj.e1);
+			jet2a.SetPtEtaPhiE(djObj.pt2,djObj.eta2,djObj.phi2,djObj.e2);
 
 			jet1b.SetPtEtaPhiE(djObj.rpt1,djObj.eta1,djObj.phi1,djObj.e1);
 			jet2b.SetPtEtaPhiE(djObj.rpt2,djObj.eta2,djObj.phi2,djObj.e2);
 
-                }else{
-                        jet2a.SetPtEtaPhiE(djObj.pt1,djObj.eta1,djObj.phi1,djObj.e1);
-                        jet1a.SetPtEtaPhiE(djObj.pt2,djObj.eta2,djObj.phi2,djObj.e2);
+		}else{
+			jet2a.SetPtEtaPhiE(djObj.pt1,djObj.eta1,djObj.phi1,djObj.e1);
+			jet1a.SetPtEtaPhiE(djObj.pt2,djObj.eta2,djObj.phi2,djObj.e2);
 
 			jet2b.SetPtEtaPhiE(djObj.rpt1,djObj.eta1,djObj.phi1,djObj.e1);
 			jet1b.SetPtEtaPhiE(djObj.rpt2,djObj.eta2,djObj.phi2,djObj.e2);
-                }
+		}
 		jetplus=jet1a+jet2a;
 		jetminus=(1-zee)*jet1a - zee*jet2a;
 		TVector2 p, v1;
@@ -137,45 +138,45 @@ void makeColumns_noGapCut_JEC_rawV2(){
 		anglePerp=a12;
 		QT=jetplus.Pt();
 
-                jetplus=jet1b+jet2b;
-                jetminus=(1-zee)*jet1b - zee*jet2b;
-                p.Set(jet1b[0],jet1b[1]);
-                q.Set(jet2b[0],jet2b[1]);
-                //Computing Qt and Pt as 2-Vectors
-                v1.Set(p.X() + q.X(),p.Y()+q.Y());
-                v2.Set(0.5*(p.X()-q.X()),0.5*(p.Y()-q.Y()));
-                //computing the norm of Qt and Pt
-                v1_norm = sqrt (  v1.X() * v1.X() + v1.Y() * v1.Y()    );
-                v2_norm = sqrt ( v2.X() * v2.X() + v2.Y() * v2.Y()   );
-                //Making unit vectors of Qt and Pt, resulting in Qt-hat and Pt-hat, unit vectors
-                v1unit.Set(v1.X() / v1_norm,v1.Y() / v1_norm);
-                v2unit.Set(v2.X() / v2_norm,v2.Y() / v2_norm);
-                //Computing the dot product of Qt-hat and Pt-hat
-                v1v2 = v1unit.X() * v2unit.X() + v1unit.Y() * v2unit.Y()   ;
-                //The dot product is the cosine of the angle
-                c12 = v1v2  ;
-                //Define a perpendicular angle to Qt-hat, in order to compute the sine of the angle
-                n.Set(v1unit.Y(),-v1unit.X()) ;
-                n_norm = sqrt ( n.X()*n.X() + n.Y()*n.Y()  );
-                //Sine of the angle
-                s12 = (n.X()*v2unit.X() + n.Y()*v2unit.Y()  ) ;
-                //Computing the angle by using arctan2 function, and considering the sign, so will be from 0,2*pi
-                a12 = atan2(s12, c12);
-                if (a12>=0) a12 = a12;
-                if (a12<0) a12 = a12 + 2*pi;
-                //Computing the cos(2phi) using trigonometry expression
-                c12  = cos(a12) * cos(a12) - sin(a12) * sin(a12);
-                rawAnglePerp=a12;
+		jetplus=jet1b+jet2b;
+		jetminus=(1-zee)*jet1b - zee*jet2b;
+		p.Set(jet1b[0],jet1b[1]);
+		q.Set(jet2b[0],jet2b[1]);
+		//Computing Qt and Pt as 2-Vectors
+		v1.Set(p.X() + q.X(),p.Y()+q.Y());
+		v2.Set(0.5*(p.X()-q.X()),0.5*(p.Y()-q.Y()));
+		//computing the norm of Qt and Pt
+		v1_norm = sqrt (  v1.X() * v1.X() + v1.Y() * v1.Y()    );
+		v2_norm = sqrt ( v2.X() * v2.X() + v2.Y() * v2.Y()   );
+		//Making unit vectors of Qt and Pt, resulting in Qt-hat and Pt-hat, unit vectors
+		v1unit.Set(v1.X() / v1_norm,v1.Y() / v1_norm);
+		v2unit.Set(v2.X() / v2_norm,v2.Y() / v2_norm);
+		//Computing the dot product of Qt-hat and Pt-hat
+		v1v2 = v1unit.X() * v2unit.X() + v1unit.Y() * v2unit.Y()   ;
+		//The dot product is the cosine of the angle
+		c12 = v1v2  ;
+		//Define a perpendicular angle to Qt-hat, in order to compute the sine of the angle
+		n.Set(v1unit.Y(),-v1unit.X()) ;
+		n_norm = sqrt ( n.X()*n.X() + n.Y()*n.Y()  );
+		//Sine of the angle
+		s12 = (n.X()*v2unit.X() + n.Y()*v2unit.Y()  ) ;
+		//Computing the angle by using arctan2 function, and considering the sign, so will be from 0,2*pi
+		a12 = atan2(s12, c12);
+		if (a12>=0) a12 = a12;
+		if (a12<0) a12 = a12 + 2*pi;
+		//Computing the cos(2phi) using trigonometry expression
+		c12  = cos(a12) * cos(a12) - sin(a12) * sin(a12);
+		rawAnglePerp=a12;
 		rawQT=jetplus.Pt();
 
 		dataNtuple->Fill(jet1a.E(),jet1a.Px(),jet1a.Py(),jet1a.Pz(),jet2a.E(),jet2a.Px(),jet2a.Py(),jet2a.Pz(),vz1,anglePerp,jet1b.Pt(),jet2b.Pt(),rawAnglePerp,QT,rawQT);
 
 		cout<<jet1b.Pt()<<" "<<jet2b.Pt()<<" "<<djObj.rpt1<<" "<<djObj.rpt2<<endl;
-	
+
 	}
 
 
-	TTree *dijetTree_GEN 	= (TTree*)fGEN->Get("dijet");
+	TTree *dijetTree_GEN = (TTree*)fGEN->Get("dijet");
 	UPCdiJet djObjGen;
 	dijetTree_GEN->SetBranchAddress("dj",&djObjGen);
 	nEvents = dijetTree_GEN->GetEntries();
@@ -187,13 +188,13 @@ void makeColumns_noGapCut_JEC_rawV2(){
 		if( djObjGen.nJet!=2 || abs(djObjGen.eta1)>1.8 || abs(djObjGen.eta2)>1.8 || djObjGen.dphi<2) continue;
 
 		vz1 = event.vz;
-                if(djObjGen.e1>djObjGen.e2){
-                        jet1a.SetPtEtaPhiE(djObjGen.pt1,djObjGen.eta1,djObjGen.phi1,djObjGen.e1);
-                        jet2a.SetPtEtaPhiE(djObjGen.pt2,djObjGen.eta2,djObjGen.phi2,djObjGen.e2);
-                }else{
-                        jet2a.SetPtEtaPhiE(djObjGen.pt1,djObjGen.eta1,djObjGen.phi1,djObjGen.e1);
-                        jet1a.SetPtEtaPhiE(djObjGen.pt2,djObjGen.eta2,djObjGen.phi2,djObjGen.e2);
-                }
+		if(djObjGen.e1>djObjGen.e2){
+			jet1a.SetPtEtaPhiE(djObjGen.pt1,djObjGen.eta1,djObjGen.phi1,djObjGen.e1);
+			jet2a.SetPtEtaPhiE(djObjGen.pt2,djObjGen.eta2,djObjGen.phi2,djObjGen.e2);
+		}else{
+			jet2a.SetPtEtaPhiE(djObjGen.pt1,djObjGen.eta1,djObjGen.phi1,djObjGen.e1);
+			jet1a.SetPtEtaPhiE(djObjGen.pt2,djObjGen.eta2,djObjGen.phi2,djObjGen.e2);
+		}
 
 		jetplusGen=jet1a+jet2a;
 		jetminusGen=(1-zee)*jet1a - zee*jet2a;
@@ -240,28 +241,28 @@ void makeColumns_noGapCut_JEC_rawV2(){
 		dijetTree_MC->GetEntry(i);
 		if( djObj.nJet!=2 || abs(djObj.eta1)>1.8 || abs(djObj.eta2)>1.8 || djObj.dphi<2) continue;
 		vz1 = event.vz;
-                
-                if(djObj.e1>djObj.e2){
-                        jet1a.SetPtEtaPhiE(djObj.pt1,djObj.eta1,djObj.phi1,djObj.e1);
-                        jet2a.SetPtEtaPhiE(djObj.pt2,djObj.eta2,djObj.phi2,djObj.e2);
 
-                        jet1b.SetPtEtaPhiE(djObj.rpt1,djObj.eta1,djObj.phi1,djObj.e1);
-                        jet2b.SetPtEtaPhiE(djObj.rpt2,djObj.eta2,djObj.phi2,djObj.e2);
+		if(djObj.e1>djObj.e2){
+			jet1a.SetPtEtaPhiE(djObj.pt1,djObj.eta1,djObj.phi1,djObj.e1);
+			jet2a.SetPtEtaPhiE(djObj.pt2,djObj.eta2,djObj.phi2,djObj.e2);
 
-                        jet1c.SetPtEtaPhiE(1.089*djObj.rpt1,djObj.eta1,djObj.phi1,djObj.e1);
-                        jet2c.SetPtEtaPhiE(1.078*djObj.rpt2,djObj.eta2,djObj.phi2,djObj.e2);
+			jet1b.SetPtEtaPhiE(djObj.rpt1,djObj.eta1,djObj.phi1,djObj.e1);
+			jet2b.SetPtEtaPhiE(djObj.rpt2,djObj.eta2,djObj.phi2,djObj.e2);
 
-                }else{
-                        jet2a.SetPtEtaPhiE(djObj.pt1,djObj.eta1,djObj.phi1,djObj.e1);
-                        jet1a.SetPtEtaPhiE(djObj.pt2,djObj.eta2,djObj.phi2,djObj.e2);
+			jet1c.SetPtEtaPhiE(1.089*djObj.rpt1,djObj.eta1,djObj.phi1,djObj.e1);
+			jet2c.SetPtEtaPhiE(1.078*djObj.rpt2,djObj.eta2,djObj.phi2,djObj.e2);
 
-                        jet2b.SetPtEtaPhiE(djObj.rpt1,djObj.eta1,djObj.phi1,djObj.e1);
-                        jet1b.SetPtEtaPhiE(djObj.rpt2,djObj.eta2,djObj.phi2,djObj.e2);
+		}else{
+			jet2a.SetPtEtaPhiE(djObj.pt1,djObj.eta1,djObj.phi1,djObj.e1);
+			jet1a.SetPtEtaPhiE(djObj.pt2,djObj.eta2,djObj.phi2,djObj.e2);
+
+			jet2b.SetPtEtaPhiE(djObj.rpt1,djObj.eta1,djObj.phi1,djObj.e1);
+			jet1b.SetPtEtaPhiE(djObj.rpt2,djObj.eta2,djObj.phi2,djObj.e2);
 
 			jet2c.SetPtEtaPhiE(1.078*djObj.rpt1,djObj.eta1,djObj.phi1,djObj.e1);
-                        jet1c.SetPtEtaPhiE(1.089*djObj.rpt2,djObj.eta2,djObj.phi2,djObj.e2);
+			jet1c.SetPtEtaPhiE(1.089*djObj.rpt2,djObj.eta2,djObj.phi2,djObj.e2);
 
-                }
+		}
 
 
 		jetplus=jet1a+jet2a;
@@ -298,69 +299,69 @@ void makeColumns_noGapCut_JEC_rawV2(){
 		anglePerpGen=a12;
 		QT=jetplus.Pt();
 
-                jetplus=jet1b+jet2b;
-                jetminus=(1-zee)*jet1b - zee*jet2b;
-                p.Set(jet1b[0],jet1b[1]);
-                q.Set(jet2b[0],jet2b[1]);
-                //Computing Qt and Pt as 2-Vectors
-                v1.Set(p.X() + q.X(),p.Y()+q.Y());
-                v2.Set(0.5*(p.X()-q.X()),0.5*(p.Y()-q.Y()));
-                //computing the norm of Qt and Pt
-                v1_norm = sqrt (  v1.X() * v1.X() + v1.Y() * v1.Y()    );
-                v2_norm = sqrt ( v2.X() * v2.X() + v2.Y() * v2.Y()   );
-                //Making unit vectors of Qt and Pt, resulting in Qt-hat and Pt-hat, unit vectors
-                v1unit.Set(v1.X() / v1_norm,v1.Y() / v1_norm);
-                v2unit.Set(v2.X() / v2_norm,v2.Y() / v2_norm);
-                //Computing the dot product of Qt-hat and Pt-hat
-                v1v2 = v1unit.X() * v2unit.X() + v1unit.Y() * v2unit.Y()   ;
-                //The dot product is the cosine of the angle
-                c12 = v1v2  ;
-                //Define a perpendicular angle to Qt-hat, in order to compute the sine of the angle
-                n.Set(v1unit.Y(),-v1unit.X()) ;
-                n_norm = sqrt ( n.X()*n.X() + n.Y()*n.Y()  );
-                //Sine of the angle
-                s12 = (n.X()*v2unit.X() + n.Y()*v2unit.Y()  ) ;
-                //Computing the angle by using arctan2 function, and considering the sign, so will be from 0,2*pi
-                a12 = atan2(s12, c12);
-                if (a12>=0) a12 = a12;
-                if (a12<0) a12 = a12 + 2*pi;
-                //Computing the cos(2phi) using trigonometry expression
-                c12  = cos(a12) * cos(a12) - sin(a12) * sin(a12);
-                rawAnglePerp=a12;
+		jetplus=jet1b+jet2b;
+		jetminus=(1-zee)*jet1b - zee*jet2b;
+		p.Set(jet1b[0],jet1b[1]);
+		q.Set(jet2b[0],jet2b[1]);
+		//Computing Qt and Pt as 2-Vectors
+		v1.Set(p.X() + q.X(),p.Y()+q.Y());
+		v2.Set(0.5*(p.X()-q.X()),0.5*(p.Y()-q.Y()));
+		//computing the norm of Qt and Pt
+		v1_norm = sqrt (  v1.X() * v1.X() + v1.Y() * v1.Y()    );
+		v2_norm = sqrt ( v2.X() * v2.X() + v2.Y() * v2.Y()   );
+		//Making unit vectors of Qt and Pt, resulting in Qt-hat and Pt-hat, unit vectors
+		v1unit.Set(v1.X() / v1_norm,v1.Y() / v1_norm);
+		v2unit.Set(v2.X() / v2_norm,v2.Y() / v2_norm);
+		//Computing the dot product of Qt-hat and Pt-hat
+		v1v2 = v1unit.X() * v2unit.X() + v1unit.Y() * v2unit.Y()   ;
+		//The dot product is the cosine of the angle
+		c12 = v1v2  ;
+		//Define a perpendicular angle to Qt-hat, in order to compute the sine of the angle
+		n.Set(v1unit.Y(),-v1unit.X()) ;
+		n_norm = sqrt ( n.X()*n.X() + n.Y()*n.Y()  );
+		//Sine of the angle
+		s12 = (n.X()*v2unit.X() + n.Y()*v2unit.Y()  ) ;
+		//Computing the angle by using arctan2 function, and considering the sign, so will be from 0,2*pi
+		a12 = atan2(s12, c12);
+		if (a12>=0) a12 = a12;
+		if (a12<0) a12 = a12 + 2*pi;
+		//Computing the cos(2phi) using trigonometry expression
+		c12  = cos(a12) * cos(a12) - sin(a12) * sin(a12);
+		rawAnglePerp=a12;
 		rawQT=jetplus.Pt();
 
-                jetplus=jet1c+jet2c;
-                jetminus=(1-zee)*jet1c - zee*jet2c;
-                p.Set(jet1c[0],jet1c[1]);
-                q.Set(jet2c[0],jet2c[1]);
-                //Computing Qt and Pt as 2-Vectors
-                v1.Set(p.X() + q.X(),p.Y()+q.Y());
-                v2.Set(0.5*(p.X()-q.X()),0.5*(p.Y()-q.Y()));
-                //computing the norm of Qt and Pt
-                v1_norm = sqrt (  v1.X() * v1.X() + v1.Y() * v1.Y()    );
-                v2_norm = sqrt ( v2.X() * v2.X() + v2.Y() * v2.Y()   );
-                //Making unit vectors of Qt and Pt, resulting in Qt-hat and Pt-hat, unit vectors
-                v1unit.Set(v1.X() / v1_norm,v1.Y() / v1_norm);
-                v2unit.Set(v2.X() / v2_norm,v2.Y() / v2_norm);
-                //Computing the dot product of Qt-hat and Pt-hat
-                v1v2 = v1unit.X() * v2unit.X() + v1unit.Y() * v2unit.Y()   ;
-                //The dot product is the cosine of the angle
-                c12 = v1v2  ;
-                //Define a perpendicular angle to Qt-hat, in order to compute the sine of the angle
-                n.Set(v1unit.Y(),-v1unit.X()) ;
-                n_norm = sqrt ( n.X()*n.X() + n.Y()*n.Y()  );
-                //Sine of the angle
-                s12 = (n.X()*v2unit.X() + n.Y()*v2unit.Y()  ) ;
-                //Computing the angle by using arctan2 function, and considering the sign, so will be from 0,2*pi
-                a12 = atan2(s12, c12);
-                if (a12>=0) a12 = a12;
-                if (a12<0) a12 = a12 + 2*pi;
-                //Computing the cos(2phi) using trigonometry expression
-                c12  = cos(a12) * cos(a12) - sin(a12) * sin(a12);
+		jetplus=jet1c+jet2c;
+		jetminus=(1-zee)*jet1c - zee*jet2c;
+		p.Set(jet1c[0],jet1c[1]);
+		q.Set(jet2c[0],jet2c[1]);
+		//Computing Qt and Pt as 2-Vectors
+		v1.Set(p.X() + q.X(),p.Y()+q.Y());
+		v2.Set(0.5*(p.X()-q.X()),0.5*(p.Y()-q.Y()));
+		//computing the norm of Qt and Pt
+		v1_norm = sqrt (  v1.X() * v1.X() + v1.Y() * v1.Y()    );
+		v2_norm = sqrt ( v2.X() * v2.X() + v2.Y() * v2.Y()   );
+		//Making unit vectors of Qt and Pt, resulting in Qt-hat and Pt-hat, unit vectors
+		v1unit.Set(v1.X() / v1_norm,v1.Y() / v1_norm);
+		v2unit.Set(v2.X() / v2_norm,v2.Y() / v2_norm);
+		//Computing the dot product of Qt-hat and Pt-hat
+		v1v2 = v1unit.X() * v2unit.X() + v1unit.Y() * v2unit.Y()   ;
+		//The dot product is the cosine of the angle
+		c12 = v1v2  ;
+		//Define a perpendicular angle to Qt-hat, in order to compute the sine of the angle
+		n.Set(v1unit.Y(),-v1unit.X()) ;
+		n_norm = sqrt ( n.X()*n.X() + n.Y()*n.Y()  );
+		//Sine of the angle
+		s12 = (n.X()*v2unit.X() + n.Y()*v2unit.Y()  ) ;
+		//Computing the angle by using arctan2 function, and considering the sign, so will be from 0,2*pi
+		a12 = atan2(s12, c12);
+		if (a12>=0) a12 = a12;
+		if (a12<0) a12 = a12 + 2*pi;
+		//Computing the cos(2phi) using trigonometry expression
+		c12  = cos(a12) * cos(a12) - sin(a12) * sin(a12);
 		redQT = jetplus.Pt();
-                redAnglePerp=a12;
+		redAnglePerp=a12;
 
-                MCRecoNtuple->Fill(jet1a.E(),jet1a.Px(),jet1a.Py(),jet1a.Pz(),jet2a.E(),jet2a.Px(),jet2a.Py(),jet2a.Pz(),anglePerpGen,jet1b.Pt(),jet2b.Pt(),rawAnglePerp,rawQT,redQT,redAnglePerp);
+		MCRecoNtuple->Fill(jet1a.E(),jet1a.Px(),jet1a.Py(),jet1a.Pz(),jet2a.E(),jet2a.Px(),jet2a.Py(),jet2a.Pz(),anglePerpGen,jet1b.Pt(),jet2b.Pt(),rawAnglePerp,rawQT,redQT,redAnglePerp);
 	}
 
 	fmd->Write();

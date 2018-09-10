@@ -129,8 +129,8 @@ void v2_v2Raw_qtRaw(){
 	p1->SetMarkerColor(kGreen);
 	p1->SetLineColor(kGreen);
 	p1->Draw();
-	p2->GetXaxis()->SetTitle("QT (GeV/c)");
-	p2->GetYaxis()->SetTitle("V2, <cos(2*phi)>");
+	p1->GetXaxis()->SetTitle("QT (GeV/c)");
+	p1->GetYaxis()->SetTitle("V2, <cos(2*phi)>");
 	p2->SetMarkerColor(kRed);
 	p2->SetLineColor(kRed);
 	p2->Draw("same");

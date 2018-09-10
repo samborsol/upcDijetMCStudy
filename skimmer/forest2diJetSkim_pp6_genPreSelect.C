@@ -33,6 +33,9 @@ void forest2diJetSkim_pp6_genPreSelect(
 	TTree *t = (TTree*)f1->Get(Form("%s/t",jetCollection.Data()));
 	TEventList *elist = new TEventList();
 
+        TFile *newfile = new TFile("data/hiforest/genPreSelect.root","recreate");
+
+
 	// Jet inputs :
 	Int_t nref;
 	Float_t jtpt[200] = {0};
@@ -235,6 +238,7 @@ void forest2diJetSkim_pp6_genPreSelect(
 	Float_t bin = 0.2;
 	Int_t numbin = (int)5/bin;
 
+
 	Int_t numevt = 0;
 	if(nevt == -1) nevt = t->GetEntries(); 
 	for (Int_t iev=0; iev<nevt; iev++) {
@@ -253,16 +257,16 @@ void forest2diJetSkim_pp6_genPreSelect(
 			bin1 = 0.;
 			bin2 = 0.;
 			DjpT = 0.; 
-		    TLorentzVector totaljtvec;
+			TLorentzVector totaljtvec;
 
 
-   			numjt = 0;
-     		orderpt.clear();
-     		ordere.clear();
-     		jetpt.clear();
-     		jeteta.clear();
-     		jetphi.clear();
-     		jetmass.clear();
+			numjt = 0;
+			orderpt.clear();
+			ordere.clear();
+			jetpt.clear();
+			jeteta.clear();
+			jetphi.clear();
+			jetmass.clear();
 
 			for(Int_t a = 0; a != nref; a++)      {
 				TLorentzVector jt;
@@ -349,27 +353,86 @@ void forest2diJetSkim_pp6_genPreSelect(
 
 				if(numjt == 2 && pt[0] > 20 && pt[1] > 15 && totaljtvec.M() > 35 && d_phi > 2 && abs(eta[0])<1.8 && abs(eta[1])<1.8 )
 				{
+
+
+					jt1vec2.SetPtEtaPhiE( pt[0], eta[0], phi[0], jt1vec.E() );
+					jt2vec2.SetPtEtaPhiE( pt[1], eta[1], phi[1], jt2vec.E() );
+
+					TVector2 p, v1;
+					TVector2 q, v2;
+
+					p.Set(jt1vec2[0], jt1vec2[1]);
+					q.Set(jt2vec2[0], jt2vec2[1]);
+
+
+					v1.Set(p.X() + q.X(), p.Y() + q.Y());
+					v2.Set(0.5*(p.X() - q.X()), 0.5*(p.Y() - q.Y()));
+
+					dj.v1_norm = TMath::Sqrt(v1.X() * v1.X() + v1.Y() * v1.Y());
+					dj.v2_norm = TMath::Sqrt(v2.X() * v2.X() + v2.Y() * v2.Y());
+
+					TVector2 v1unit, v2unit;
+					v1unit.Set(v1.X() / dj.v1_norm,v1.Y() / dj.v1_norm);
+					v2unit.Set(v2.X() / dj.v2_norm,v2.Y() / dj.v2_norm);
+
+					v1v2 = v1unit.X() * v2unit.X() + v1unit.Y() * v2unit.Y();
+
+					dj.c12 = v1v2;
+
+					n.Set(v1unit.Y(),-v1unit.X());
+					dj.n_norm = sqrt(n.X() * n.X() + n.Y() * n.Y());
+
+					dj.s12 = (n.X()*v2unit.X() + n.Y()*v2unit.Y());
+
+					dj.a12 = TMath::ATan2(dj.s12, dj.c12);
+					if (dj.a12>=0) dj.a12 = dj.a12;
+					if (dj.a12<0) dj.a12 = dj.a12 + 2*TMath::Pi();
+
+					dj.c2phi  = cos(dj.a12) * cos(dj.a12) - sin(dj.a12) * sin(dj.a12);
+
+					dj.nJet = numjt;
+					dj.mass = djvec.M();
+					dj.pt   = djvec.Pt();
+					dj.y   = djvec.Rapidity();
+					dj.phi   = djvec.Phi();
+					dj.eta  = djvec.Eta();
+					dj.dphi = TMath::Abs(getDPHI( phi[0], phi[1] ));
+					dj.dpt = TMath::Abs(pt[0] - pt[1]);
+					dj.deta = TMath::Abs(eta[0] - eta[1]);
+					dj.aj = TMath::Abs(pt[0] - pt[1])/(pt[0] + pt[1]);
+					dj.pt1 = pt[0];
+					dj.rpt1 = rawpt[0];
+					dj.eta1 = eta[0];
+					dj.phi1 = phi[0];
+					dj.e1 = jt1vec.E();
+					dj.pt2 = pt[1];
+					dj.rpt2 = rawpt[1];
+					dj.eta2 = eta[1];
+					dj.phi2 = phi[1];
+					dj.e2 = jt2vec.E();
+
+					djTree->Fill();
 					elist->Enter(iev);
 				}
 			}
 		}
 	}
 	TTree *HltTree = (TTree*)f1->Get("hltanalysis/HltTree");
-  	TTree *hiTree  = (TTree*)f1->Get("hiEvtAnalyzer/HiTree");
-  	TTree *trackTree  = (TTree*)f1->Get("ppTrack/trackTree");
-  	//TTree *hbhe = (TTree*)f1->Get("rechitanalyzer/hbhe");
-  	//TTree *hf = (TTree*)f1->Get("rechitanalyzer/hf");
-  	//TTree *ee = (TTree*)f1->Get("rechitanalyzer/ee");
-  	//TTree *eb = (TTree*)f1->Get("rechitanalyzer/eb");
+	TTree *hiTree  = (TTree*)f1->Get("hiEvtAnalyzer/HiTree");
+	TTree *trackTree  = (TTree*)f1->Get("ppTrack/trackTree");
+	//TTree *hbhe = (TTree*)f1->Get("rechitanalyzer/hbhe");
+	//TTree *hf = (TTree*)f1->Get("rechitanalyzer/hf");
+	//TTree *ee = (TTree*)f1->Get("rechitanalyzer/ee");
+	//TTree *eb = (TTree*)f1->Get("rechitanalyzer/eb");
 
 
-	TFile *newfile = new TFile("data/hiforest/genPreSelect.root","recreate");
 	t->SetEventList(elist);
 	TTree *s = t->CopyTree("");
 	TTree *s2 = HltTree->CopyTree("");
 	TTree *s3 = hiTree->CopyTree("");
 	TTree *s4 = trackTree->CopyTree("");
 
+	djTree->Write();
 	s->Write();
 	s2->Write();
 	s3->Write();
