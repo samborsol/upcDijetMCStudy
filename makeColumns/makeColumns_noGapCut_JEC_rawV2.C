@@ -12,17 +12,18 @@ void makeColumns_noGapCut_JEC_rawV2(){
 	TString treeFolder = "/home/samboren/Workspace/upcAnalysis/mcClosure/data/skimmedFiles/";
 	TFile *fMCTrig = new TFile(treeFolder+"TrkCutsppreco_closureMC_trigHLT_HIUPCSingleEG5NotHF2Pixel_SingleTrack_v1_jetCollectionak4PFJetAnalyzer_minJetPt0.root");
 	TFile *fDATA = new TFile(treeFolder+"TrkCutsppreco_upcDiJetSkim180827_trigHLT_HIUPCSingleEG5NotHF2Pixel_SingleTrack_v1_jetCollectionak4PFJetAnalyzer_minJetPt0_2018y_8m_27d_23h_34m.root");
- 	treeFolder = "/home/samboren/Workspace/upcAnalysis/mcClosure/data/hiforest/";
+	treeFolder = "/home/samboren/Workspace/upcAnalysis/mcClosure/data/hiforest/";
 	TFile *fGEN = new TFile(treeFolder+"genPreSelect.root");
 
 	TTree *dijetTree_DATA   = (TTree*)fDATA->Get("dijet");
 	TTree *trkTree_DATA     = (TTree*)fDATA->Get("fullTrkTree");
 	TTree *calTree_DATA = (TTree*)fDATA->Get("Cal");
 	TTree *evtTree_DATA = (TTree*)fDATA->Get("evt");
+	TTree *vtxTree_DATA = (TTree*)fDATA->Get("vtx");
 	dijetTree_DATA->AddFriend(trkTree_DATA);
 	dijetTree_DATA->AddFriend(calTree_DATA);
 	dijetTree_DATA->AddFriend(evtTree_DATA);
-
+	dijetTree_DATA->AddFriend(vtxTree_DATA);
 
 	UPCdiJet djObj;
 	Float_t HFplusmax;
@@ -53,16 +54,17 @@ void makeColumns_noGapCut_JEC_rawV2(){
 
 	Float_t d_phi;
 
-	Int_t nEvents;
-
 	dijetTree_DATA->SetBranchAddress("dj",&djObj);
 	calTree_DATA->SetBranchAddress("HFplusmax",&HFplusmax);
 	calTree_DATA->SetBranchAddress("HFminusmax",&HFminusmax);
 
+	Float_t dataVtx;
+	vtxTree_DATA->SetBranchAddress("zVertex",&dataVtx);
+
 	UPCEvent event;
 	evtTree_DATA->SetBranchAddress("event",&event);	
 
-	nEvents = dijetTree_DATA->GetEntries();
+	Float_t nEvents;
 
 	TLorentzVector v01, v02, vv1, vv2, vqt, vpt, m, w, g, h, p, q;
 	TVector2 n;
@@ -87,9 +89,10 @@ void makeColumns_noGapCut_JEC_rawV2(){
 	TNtuple *dataNtuple = new TNtuple("dataNtuple","data from tree","e1:px1:py1:pz1:e2:px2:py2:pz2:vtx1:phiAngle:rpt1:rpt2:rawPhiAngle:QT:rawQT");
 	for(Long64_t i=0; i<nEvents; i++){
 		dijetTree_DATA->GetEntry(i);
-
 		if(djObj.nJet!=2 || abs(djObj.eta1)>1.8 || abs(djObj.eta2)>1.8 || djObj.dphi<2) continue;
+
 		vz1 = event.vz;
+
 		if(djObj.e1>djObj.e2){
 			jet1a.SetPtEtaPhiE(djObj.pt1,djObj.eta1,djObj.phi1,djObj.e1);
 			jet2a.SetPtEtaPhiE(djObj.pt2,djObj.eta2,djObj.phi2,djObj.e2);
@@ -104,6 +107,7 @@ void makeColumns_noGapCut_JEC_rawV2(){
 			jet2b.SetPtEtaPhiE(djObj.rpt1,djObj.eta1,djObj.phi1,djObj.e1);
 			jet1b.SetPtEtaPhiE(djObj.rpt2,djObj.eta2,djObj.phi2,djObj.e2);
 		}
+
 		jetplus=jet1a+jet2a;
 		jetminus=(1-zee)*jet1a - zee*jet2a;
 		TVector2 p, v1;
@@ -169,10 +173,7 @@ void makeColumns_noGapCut_JEC_rawV2(){
 		rawAnglePerp=a12;
 		rawQT=jetplus.Pt();
 
-		dataNtuple->Fill(jet1a.E(),jet1a.Px(),jet1a.Py(),jet1a.Pz(),jet2a.E(),jet2a.Px(),jet2a.Py(),jet2a.Pz(),vz1,anglePerp,jet1b.Pt(),jet2b.Pt(),rawAnglePerp,QT,rawQT);
-
-		cout<<jet1b.Pt()<<" "<<jet2b.Pt()<<" "<<djObj.rpt1<<" "<<djObj.rpt2<<endl;
-
+		dataNtuple->Fill(jet1a.E(),jet1a.Px(),jet1a.Py(),jet1a.Pz(),jet2a.E(),jet2a.Px(),jet2a.Py(),jet2a.Pz(),dataVtx,anglePerp,jet1b.Pt(),jet2b.Pt(),rawAnglePerp,QT,rawQT);
 	}
 
 
@@ -234,13 +235,16 @@ void makeColumns_noGapCut_JEC_rawV2(){
 	//Now doing the reco MC shit
 	TTree *dijetTree_MC = (TTree*)fMCTrig->Get("dijet");
 	dijetTree_MC->SetBranchAddress("dj",&djObj);
+        TTree *vtxTree_MC = (TTree*)fMCTrig->Get("vtx");
+	dijetTree_MC->AddFriend(vtxTree_MC);
+	vtxTree_MC->SetBranchAddress("zVertex",&vz1);	
+
 	nEvents = dijetTree_MC->GetEntries();
 
-	TNtuple *MCRecoNtuple = new TNtuple("MCRecoNtuple","reco mc from tree","e1:px1:py1:pz1:e2:px2:py2:pz2:phiAngle:rpt1:rpt2:rawPhiAngle:rawQT:redQT:redPhiAngle");
+	TNtuple *MCRecoNtuple = new TNtuple("MCRecoNtuple","reco mc from tree","e1:px1:py1:pz1:e2:px2:py2:pz2:phiAngle:rpt1:rpt2:rawPhiAngle:rawQT:vtx1");
 	for(Long64_t i=0; i<nEvents; i++){
 		dijetTree_MC->GetEntry(i);
 		if( djObj.nJet!=2 || abs(djObj.eta1)>1.8 || abs(djObj.eta2)>1.8 || djObj.dphi<2) continue;
-		vz1 = event.vz;
 
 		if(djObj.e1>djObj.e2){
 			jet1a.SetPtEtaPhiE(djObj.pt1,djObj.eta1,djObj.phi1,djObj.e1);
@@ -361,7 +365,8 @@ void makeColumns_noGapCut_JEC_rawV2(){
 		redQT = jetplus.Pt();
 		redAnglePerp=a12;
 
-		MCRecoNtuple->Fill(jet1a.E(),jet1a.Px(),jet1a.Py(),jet1a.Pz(),jet2a.E(),jet2a.Px(),jet2a.Py(),jet2a.Pz(),anglePerpGen,jet1b.Pt(),jet2b.Pt(),rawAnglePerp,rawQT,redQT,redAnglePerp);
+		MCRecoNtuple->Fill(jet1a.E(),jet1a.Px(),jet1a.Py(),jet1a.Pz(),jet2a.E(),jet2a.Px(),jet2a.Py(),jet2a.Pz(),anglePerpGen,jet1b.Pt(),jet2b.Pt(),rawAnglePerp,rawQT,vz1);
+
 	}
 
 	fmd->Write();
