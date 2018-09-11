@@ -7,6 +7,7 @@
 #include <iostream>
 #include <algorithm>
 #include <vector>
+#include <TEventList.h>
 
 using std::stringstream;
 using std::vector;
@@ -34,6 +35,8 @@ void forest2diJetSkim_pp6(
 	TTree *t = (TTree*)f1->Get("t");
 	TTree *trackTree  = (TTree*)f1->Get("trackTree");
 	TFile* newfile = new TFile(Form("data/skimmedFiles/TrkCutsppreco_%s_trig%s_jetCollection%s_minJetPt%d.root",outputFname.Data(), trig.Data(), jetCollection.Data(), (int)minjPt),"recreate");
+
+	TEventList *elist = new TEventList();
 
 	t->AddFriend(HltTree);
 	t->AddFriend(hiTree);
@@ -745,6 +748,8 @@ void forest2diJetSkim_pp6(
 			thjetTree->Fill();
 			mthjetTree->Fill();
 			vtxTree->Fill();
+
+			elist->Enter(iev);
 		}
 		else
 		{
@@ -767,7 +772,10 @@ void forest2diJetSkim_pp6(
 	trkTree->Write();
 	djTree->Write();
 	eventTree->Write();
-
+	t->SetEventList(elist);
+	TTree *s = t->CopyTree("");
+	s->Write();
+	
 	newfile->Close();
 	cout << "THE END" << endl;
 } 

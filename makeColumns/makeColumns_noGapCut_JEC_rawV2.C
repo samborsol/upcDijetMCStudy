@@ -89,7 +89,7 @@ void makeColumns_noGapCut_JEC_rawV2(){
 	TNtuple *dataNtuple = new TNtuple("dataNtuple","data from tree","e1:px1:py1:pz1:e2:px2:py2:pz2:vtx1:phiAngle:rpt1:rpt2:rawPhiAngle:QT:rawQT");
 	for(Long64_t i=0; i<nEvents; i++){
 		dijetTree_DATA->GetEntry(i);
-		if(djObj.nJet!=2 || abs(djObj.eta1)>1.8 || abs(djObj.eta2)>1.8 || djObj.dphi<2) continue;
+		if( djObj.mass < 35 || djObj.pt1<20 || djObj.pt2<15 || djObj.nJet!=2 || abs(djObj.eta1)>1.8 || abs(djObj.eta2)>1.8 || djObj.dphi<2) continue;
 
 		vz1 = event.vz;
 
@@ -186,7 +186,7 @@ void makeColumns_noGapCut_JEC_rawV2(){
 	TNtuple *MCNtuple = new TNtuple("MCNtuple","gen mc from tree","e1:px1:py1:pz1:e2:px2:py2:pz2:vtx1:phiAngle:QT");
 	for(Long64_t i=0; i<nEvents; i++){
 		dijetTree_GEN->GetEntry(i);
-		if( djObjGen.nJet!=2 || abs(djObjGen.eta1)>1.8 || abs(djObjGen.eta2)>1.8 || djObjGen.dphi<2) continue;
+		if(  djObjGen.mass < 35 || djObjGen.pt1<20 || djObjGen.pt2<15 || djObjGen.nJet!=2 || abs(djObjGen.eta1)>1.8 || abs(djObjGen.eta2)>1.8 || djObjGen.dphi<2) continue;
 
 		vz1 = event.vz;
 		if(djObjGen.e1>djObjGen.e2){
@@ -244,7 +244,7 @@ void makeColumns_noGapCut_JEC_rawV2(){
 	TNtuple *MCRecoNtuple = new TNtuple("MCRecoNtuple","reco mc from tree","e1:px1:py1:pz1:e2:px2:py2:pz2:phiAngle:rpt1:rpt2:rawPhiAngle:rawQT:vtx1");
 	for(Long64_t i=0; i<nEvents; i++){
 		dijetTree_MC->GetEntry(i);
-		if( djObj.nJet!=2 || abs(djObj.eta1)>1.8 || abs(djObj.eta2)>1.8 || djObj.dphi<2) continue;
+		if( djObj.mass < 35 || djObj.pt1<20 || djObj.pt2<15|| djObj.nJet!=2 || abs(djObj.eta1)>1.8 || abs(djObj.eta2)>1.8 || djObj.dphi<2) continue;
 
 		if(djObj.e1>djObj.e2){
 			jet1a.SetPtEtaPhiE(djObj.pt1,djObj.eta1,djObj.phi1,djObj.e1);
