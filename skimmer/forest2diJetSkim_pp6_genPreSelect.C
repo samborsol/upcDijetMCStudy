@@ -33,7 +33,7 @@ void forest2diJetSkim_pp6_genPreSelect(
 	TTree *t = (TTree*)f1->Get(Form("%s/t",jetCollection.Data()));
 	TEventList *elist = new TEventList();
 
-        TFile *newfile = new TFile("data/hiforest/genPreSelect.root","recreate");
+        TFile *newfile = new TFile("data/skimmedFiles/genPreSelect.root","recreate");
 
 
 	// Jet inputs :

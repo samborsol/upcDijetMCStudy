@@ -9,10 +9,10 @@
 
 # pp di-jet data 
 #Input file is at MIT server 
-inputFile="data/hiforest/genPreSelect.root" 
+inputFile="data/skimmedFiles/genPreSelect.root" 
 jetCollection="ak4PFJetAnalyzer"
-#trig="HLT_HIUPCSingleEG5NotHF2Pixel_SingleTrack_v1"
-trig=""
+trig="HLT_HIUPCSingleEG5NotHF2Pixel_SingleTrack_v1"
+#trig=""
 for  minjPt in 0
 do
     root -l -b -q 'skimmer/forest2diJetSkim_pp6.C+("'$inputFile'","closureMC","'$trig'","'$jetCollection'",'$minjPt',-1)'
