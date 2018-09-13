@@ -15,7 +15,7 @@ jetCollection="ak4PFJetAnalyzer"
 trig=""
 for  minjPt in 0
 do
-    root -l -b -q 'skimmer/forest2diJetSkim_pp8_genPreSelect.C+("'$inputFile'","dphiMC","'$trig'","'$jetCollection'",'$minjPt',-1)'
+    root -l -b -q 'skimmer/forest2diJetSkim_pp6_genPreSelect.C+("'$inputFile'","closureMC","'$trig'","'$jetCollection'",'$minjPt',-1)'
 done
 # pp PYTHIA MC :
 # input file is at XXX

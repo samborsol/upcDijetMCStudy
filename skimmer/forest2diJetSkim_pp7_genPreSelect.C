@@ -435,5 +435,7 @@ void forest2diJetSkim_pp7_genPreSelect(
 	s2->Write();
 	s3->Write();
 	s4->Write();
+
+	newfile->Close();
 } 
 

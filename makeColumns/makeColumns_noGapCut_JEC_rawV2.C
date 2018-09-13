@@ -12,7 +12,7 @@ void makeColumns_noGapCut_JEC_rawV2(){
 	TString treeFolder = "/home/samboren/Workspace/upcAnalysis/mcClosure/data/skimmedFiles/";
 	TFile *fMCTrig = new TFile(treeFolder+"TrkCutsppreco_closureMC_trigHLT_HIUPCSingleEG5NotHF2Pixel_SingleTrack_v1_jetCollectionak4PFJetAnalyzer_minJetPt0.root");
 	TFile *fDATA = new TFile(treeFolder+"TrkCutsppreco_upcDiJetSkim180827_trigHLT_HIUPCSingleEG5NotHF2Pixel_SingleTrack_v1_jetCollectionak4PFJetAnalyzer_minJetPt0_2018y_8m_27d_23h_34m.root");
-	treeFolder = "/home/samboren/Workspace/upcAnalysis/mcClosure/data/hiforest/";
+	treeFolder = "/home/samboren/Workspace/upcAnalysis/mcClosure/data/skimmedFiles/";
 	TFile *fGEN = new TFile(treeFolder+"genPreSelect.root");
 
 	TTree *dijetTree_DATA   = (TTree*)fDATA->Get("dijet");

@@ -45,7 +45,7 @@ void dphi_stat(){
 		dijetTree_MC->GetEntry(i);
 
 
-		if( ngen!=2 || djObj.nJet!=2 || abs(djObj.eta1)>1.8 || abs(djObj.eta2)>1.8 || djObj.pt1<20 || djObj.pt2<15 || djObj.mass<35) continue	
+		if( ngen!=2 || djObj.nJet!=2 || abs(djObj.eta1)>1.8 || abs(djObj.eta2)>1.8 || djObj.pt1<20 || djObj.pt2<15 || djObj.mass<35) continue;	
 		h1->Fill(djObj.dphi);
 	}
 
