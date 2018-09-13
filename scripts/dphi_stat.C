@@ -60,6 +60,6 @@ void dphi_stat(){
         h1->GetXaxis()->SetTitle("#Delta #phi (azimuthal)");
         h1->GetYaxis()->SetTitle("Events per bin");
 	h1->Draw();
-        c1->SaveAs("../plots/png/mult_fake_stat.png");
+        c1->SaveAs("../plots/png/dphi_stat.png");
 
 }

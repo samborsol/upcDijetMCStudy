@@ -42,18 +42,18 @@ Run the script "" to create a basic ntuple that is easy to make plots for. The s
 
 Descriptions of plotting scripts used to create the plots in the google doc of preapproval-answers:
 
-1. ang_resolution.C: plots the angular resolution of jets, for coherent dijet selection.
+1. ang_resolution.C: plots the angular resolution of jets, for coherent dijet selection. Uses skim file as input.
 
-2. pt_resolution.C: plots the pt resolution of jets, for coherent dijet selection.
+2. pt_resolution.C: plots the pt resolution of jets, for coherent dijet selection.  Uses skim file as input.
 
-3. dphi_stat.C: dphi distribution of MC reco, for the coherent dijet selection, but no cuts on dphi.
+3. dphi_stat.C: dphi distribution of MC reco, for the coherent dijet selection, but no cuts on dphi. Uses skim file as input. 
 
-4. qt_gaussian.C: gaussian fit to the QT distribution, for the coherent dijet selection.
+4. qt_gaussian.C: gaussian fit to the QT distribution, for the coherent dijet selection. Uses data columns as input.
 
-5. v2_v2Raw_qtRaw.C: comparison of v2, v2raw, and v2 gen for the coherent dijet selection.
+5. v2_v2Raw_qtRaw.C: comparison of v2, v2raw, and v2 gen for the coherent dijet selection. Uses data columns as input.
 
-6. mult_fake_stat.C: difference (#reco jets)-(#gen jets) for coherent dijet selection, but with no nJet cut.
+6. mult_fake_stat.C: difference (#reco jets)-(#gen jets) for coherent dijet selection, but with no nJet cut. Uses data columns as input.
 
-7. qt_gaussian_raw.C: gaussian fit to the raw QT distribution, for the coherent dijet selection.
+7. qt_gaussian_raw.C: gaussian fit to the raw QT distribution, for the coherent dijet selection. Uses data columns as input.
 
-8. vertex_mcreco_data.C: difference between reco and gen vertices, coherent dijet selection.
+8. vertex_mcreco_data.C: difference between reco and gen vertices, coherent dijet selection. Uses data columns as input.
