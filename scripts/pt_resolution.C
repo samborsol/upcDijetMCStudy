@@ -37,7 +37,7 @@ void pt_resolution(){
 	Float_t jetpt[2];
 	Float_t genpt[2];
 
-	TH1F *h1 = new TH1F("h1","h1",100,0,3);
+	TH1F *h1 = new TH1F("h1","h1",100,-40,40);
 
 	jetTree_MC->SetBranchAddress("jtpt",&jetpt);
 	jetTree_MC->SetBranchAddress("genpt",&genpt);
@@ -51,13 +51,13 @@ void pt_resolution(){
 
 		if( abs(jetpt[0]-genpt[0])<abs(jetpt[1]-genpt[0]) ){
 
-			h1->Fill(jetpt[0]/genpt[0]);				
-			h1->Fill(jetpt[1]/genpt[1]);
+			h1->Fill(jetpt[0]-genpt[0]);				
+			h1->Fill(jetpt[1]-genpt[1]);
 
 		}
 		else{
-			h1->Fill( jetpt[0]/genpt[1] );
-			h1->Fill( jetpt[1]/genpt[0] );
+			h1->Fill( jetpt[0]-genpt[1] );
+			h1->Fill( jetpt[1]-genpt[0] );
 
 		}
 	}
@@ -66,7 +66,7 @@ void pt_resolution(){
 
         TCanvas *c1 = new TCanvas("c1","c1",800,800);
 
-        gStyle->SetStatX(0.9);
+        gStyle->SetStatX(0.5);
         gStyle->SetStatY(0.6);
 
         h1->SetLineWidth(2);
@@ -75,8 +75,8 @@ void pt_resolution(){
 	h1->Draw();
         TF1* ft1 = new TF1("ft1","gaus",0,3);
         h1->Fit(ft1);
-        TLegend *l1 = new TLegend(0.60,0.75,0.95,0.90);
-        l1->AddEntry(h1,"Reco-pT/Gen-pT","l");
+        TLegend *l1 = new TLegend(0.20,0.75,0.4,0.90);
+        l1->AddEntry(h1,"Reco-Gen","l");
         l1->Draw();
         c1->SaveAs("../plots/png/pt_resolution.png");
 

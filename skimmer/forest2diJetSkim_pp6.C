@@ -402,18 +402,18 @@ void forest2diJetSkim_pp6(
 
 		t->GetEntry(iev);
 
-     BAD = 0;
-     ///// Call the values /////
-     pT1 = 0.;
-     pT2 = 0.;
-     w1 = 0.;
-     w2 = 0.;
-     eff1 = 0.;
-     eff2 = 0.;
-     bin1 = 0.;
-     bin2 = 0.;
-     DjpT = 0.; 
-     TLorentzVector totaljtvec;
+		BAD = 0;
+		///// Call the values /////
+		pT1 = 0.;
+		pT2 = 0.;
+		w1 = 0.;
+		w2 = 0.;
+		eff1 = 0.;
+		eff2 = 0.;
+		bin1 = 0.;
+		bin2 = 0.;
+		DjpT = 0.; 
+		TLorentzVector totaljtvec;
 
 
 
@@ -435,6 +435,7 @@ void forest2diJetSkim_pp6(
 				trkpt[ntrk] = trkPt[c];
 				BRP_cand.push_back(abs(trketa[ntrk] - NE));
 				FRP_cand.push_back(abs(trketa[ntrk] - PE));
+
 				ntrk = ntrk + 1;
 
 				floatntrk = (float)ntrk;
@@ -514,7 +515,6 @@ void forest2diJetSkim_pp6(
 		{
 			rFRP = -1;
 		}
-
 		for(Int_t z = 0; z != numbin; z++)
 		{
 			if(rBRP >= 0.2*z && rBRP < 0.2*(z + 1))
@@ -526,6 +526,7 @@ void forest2diJetSkim_pp6(
 				FRP = (float)0.2*z;
 			}
 		}
+
 
 		nVertex = nVtx;
 		for(Int_t p = 0; p != nVtx; p++)
@@ -760,6 +761,9 @@ void forest2diJetSkim_pp6(
 		jeteta.clear();
 		jetphi.clear();
 		jetmass.clear(); 
+		dj.clear();
+                BRP_cand.clear();
+                FRP_cand.clear();
 	} //end of event loop
 	vtxTree->Write();
 	mthjetTree->Write();
@@ -775,7 +779,7 @@ void forest2diJetSkim_pp6(
 	t->SetEventList(elist);
 	TTree *s = t->CopyTree("");
 	s->Write();
-	
+
 	newfile->Close();
 	cout << "THE END" << endl;
 } 

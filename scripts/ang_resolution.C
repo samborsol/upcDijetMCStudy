@@ -37,7 +37,7 @@ void ang_resolution(){
 	Float_t jetpt[2];
 	Float_t genpt[2];
 
-	TH1F *h1 = new TH1F("h1","h1",100,.8,1.2);
+	TH1F *h1 = new TH1F("h1","h1",100,-1,1);
 
 	jetTree_MC->SetBranchAddress("jtphi",&jetpt);
 	jetTree_MC->SetBranchAddress("genphi",&genpt);
@@ -51,13 +51,13 @@ void ang_resolution(){
 
 		if( abs(jetpt[0]-genpt[0])<abs(jetpt[1]-genpt[0]) ){
 
-			h1->Fill(jetpt[0]/genpt[0]);				
-			h1->Fill(jetpt[1]/genpt[1]);
+			h1->Fill(jetpt[0]-genpt[0]);				
+			h1->Fill(jetpt[1]-genpt[1]);
 
 		}
 		else{
-			h1->Fill( jetpt[0]/genpt[1] );
-			h1->Fill( jetpt[1]/genpt[0] );
+			h1->Fill( jetpt[0]-genpt[1] );
+			h1->Fill( jetpt[1]-genpt[0] );
 
 		}
 	}
@@ -70,13 +70,13 @@ void ang_resolution(){
         gStyle->SetStatY(0.6);
 
         h1->SetLineWidth(2);
-        h1->GetXaxis()->SetTitle("Jet Resolution in Azimuthal Angle, #phi");
+        h1->GetXaxis()->SetTitle("Jet Resolution, #phi Azimuthal, #phi");
         h1->GetYaxis()->SetTitle("Events per bin");
 	h1->Draw();
         TF1* ft1 = new TF1("ft1","gaus",0,3);
         h1->Fit(ft1);
         TLegend *l1 = new TLegend(0.60,0.75,0.95,0.90);
-        l1->AddEntry(h1,"Reco-#phi/Gen-#phi","l");
+        l1->AddEntry(h1,"Reco-Gen","l");
         l1->Draw();
         c1->SaveAs("../plots/png/ang_resolution.png");
 
