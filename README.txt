@@ -11,10 +11,13 @@ Now, you will want to make the data folders
 >>mkdir data
 >>mkdir data/skimmedFiles
 >>mkdir data/hiforest
+>>mkdir data/dataColumns
 
 If you have the data-skimmed-file, put it in "data/skimmedFiles"
 
-Run the "GEN" forest skimmer. This will give you a skimmed-hiforest that only has gen jets that pass these cuts:
+Beomgon's original data skimming script is "skimmer/forest2diJetSkim_pp5.C".
+
+Run the "runForest2DijetSkimer_GEN.sh". This bash script uses "skimmer/forest2diJetSkim_pp6_genPreSelect.C". Look inside this file for detailed comments. It will give you a skimmed-hiforest that only has gen jets that pass these cuts:
 
 1. Only two gen jets are in the event.
 2. The leading jet has genpt > 20 GeV.
@@ -23,7 +26,7 @@ Run the "GEN" forest skimmer. This will give you a skimmed-hiforest that only ha
 5. The phi difference between the genjets is > 2. 
 6. The invariant mass of the gen dijet is > 35 GeV.
 
-Now, with this hiforest that only has what we want in it, run the "MC" forest skimmer. 
+Now, with this hiforest that only has what we want in it, run the "runForest2DijetSkimer_MC.sh". Look inside this file for detailed comments. This bash script uses "skimmer/forest2diJetSkim_pp6.C".
 
 Descriptions of plotting scripts used to create the plots in the google doc of preapproval-answers:
 
